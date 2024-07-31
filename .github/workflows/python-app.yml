@@ -1,0 +1,40 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Python CI for Face and Age Detection
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install opencv-python-headless numpy
+
+    - name: Download pre-trained models
+      run: |
+        curl -L -o deploy_gender.prototxt https://raw.githubusercontent.com/GilLevi/AgeGenderDeepLearning/master/models/gender_net/deploy_gender.prototxt
+        curl -L -o gender_net.caffemodel https://www.dropbox.com/s/yrm8f4ec1mwtah3/gender_net.caffemodel?dl=1
+        curl -L -o deploy_age.prototxt https://raw.githubusercontent.com/GilLevi/AgeGenderDeepLearning/master/models/age_net/deploy_age.prototxt
+        curl -L -o age_net.caffemodel https://www.dropbox.com/s/zzn1yluxr60xuqm/age_net.caffemodel?dl=1
+
+    - name: Run Face and Age Detection Script
+      run: |
+        python face-detection.py
+        
