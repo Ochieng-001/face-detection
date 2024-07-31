@@ -36,5 +36,5 @@ jobs:
 
     - name: Run Face and Age Detection Script
       run: |
-        ../../face.py
+        /../../face.py
         
